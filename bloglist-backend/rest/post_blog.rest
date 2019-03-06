@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVydXNlciIsImlkIjoiNWM2OTZhNzI0MTY1ZTI2ZGUxYWMzOGE4IiwiaWF0IjoxNTUwNDEzNTMyfQ.kTbpRqjkbEWBqOYK_PU8vYpNUuqU5GHaiGRE6yUE5Xg
+
+{
+    "title": "Mixins are considered harmful",
+    "author": "Dan Abramov",
+    "url": "https://reactjs.org/blog/2016/07/13/mixins-considered-harmful.html",
+    "likes": 999
+}
