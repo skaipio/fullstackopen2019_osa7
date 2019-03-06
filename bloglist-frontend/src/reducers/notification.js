@@ -29,7 +29,7 @@ function notificationReducer(state = initialState, action) {
         type: null
       }
     default:
-      return initialState
+      return state
   }
 }
 

@@ -7,23 +7,29 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { clearNotificationAction, setNotificationAction } from './reducers/notification';
+import { addBlogAction, removeBlogByIdAction, setBlogsAction, updateBlogAction } from './reducers/blogs'
+import {
+  clearNotificationAction,
+  setNotificationAction
+} from './reducers/notification'
 
 const localStorageUserKey = 'bloglistUser'
 
-const App = ({clearNotification, setNotification}) => {
-  const [blogs, setBlogs] = useState([])
+const App = ({
+  blogs,
+  addBlog,
+  updateBlog,
+  removeBlogById,
+  setBlogs,
+  clearNotification,
+  setNotification
+}) => {
   const [user, setUser] = useState(null)
 
   const loginFormRef = React.createRef()
 
-  const setAndSortBlogs = blogs => {
-    blogs.sort((blogLeft, blogRight) => blogRight.likes - blogLeft.likes)
-    setBlogs(blogs)
-  }
-
   useEffect(() => {
-    blogService.getAll().then(allBlogs => setAndSortBlogs(allBlogs))
+    blogService.getAll().then(setBlogs)
   }, [])
 
   useEffect(() => {
@@ -73,7 +79,9 @@ const App = ({clearNotification, setNotification}) => {
   const createBlog = async blog => {
     try {
       const savedBlog = await blogService.create(blog)
-      setBlogs(blogs.concat(savedBlog))
+      savedBlog.user = {...loginService.getUser()}
+      delete savedBlog.user.token
+      addBlog(savedBlog)
       showNotification(
         `a new blog ${savedBlog.title} by ${savedBlog.author} added`,
         'success'
@@ -93,10 +101,7 @@ const App = ({clearNotification, setNotification}) => {
     try {
       const updatedBlog = await blogService.update(likedBlog, blog.id)
       updatedBlog.user = blog.user
-      const index = blogs.findIndex(b => b.id === blog.id)
-      const updatedBlogs = [...blogs]
-      updatedBlogs.splice(index, 1, updatedBlog)
-      setAndSortBlogs(updatedBlogs)
+      updateBlog(updatedBlog)
     } catch (error) {
       showNotification(error.message, 'error')
     }
@@ -107,10 +112,7 @@ const App = ({clearNotification, setNotification}) => {
 
     try {
       await blogService.remove(blog.id)
-      const index = blogs.findIndex(b => b.id === blog.id)
-      const updatedBlogs = [...blogs]
-      updatedBlogs.splice(index, 1)
-      setAndSortBlogs(updatedBlogs)
+      removeBlogById(blog.id)
     } catch (error) {
       showNotification(error.message, 'error')
     }
@@ -156,10 +158,20 @@ const App = ({clearNotification, setNotification}) => {
   )
 }
 
+const mapStateToProps = state => ({
+  blogs: state.blogs
+})
+
 const mapDispatchToProps = {
-  clearNotification : clearNotificationAction,
+  addBlog: addBlogAction,
+  updateBlog: updateBlogAction,
+  removeBlogById: removeBlogByIdAction,
+  setBlogs: setBlogsAction,
+  clearNotification: clearNotificationAction,
   setNotification: setNotificationAction
 }
 
-
-export default connect(null, mapDispatchToProps)(App)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App)
