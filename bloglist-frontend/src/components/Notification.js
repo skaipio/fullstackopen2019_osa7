@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
-const Notification = ({ text, type }) => {
+const Notification = ({ content, type }) => {
+  if (!content || content.length === 0) return null
   const successStyle = {
     border: '2px solid green',
     backgroundColor: '#e0ffd5',
@@ -15,15 +17,23 @@ const Notification = ({ text, type }) => {
   }
 
   return (
-    <div style={type === 'error' ? errorStyle : successStyle} className={{ success: type === 'success', error: type === 'error' }}>
-      {text}
+    <div
+      style={type === 'error' ? errorStyle : successStyle}
+      className={{ success: type === 'success', error: type === 'error' }}
+    >
+      {content}
     </div>
   )
 }
 
 Notification.propTypes = {
-  text: PropTypes.string.isRequired,
+  content: PropTypes.string,
   type: PropTypes.string
 }
 
-export default Notification
+const mapStateToProps = (state) => ({
+  content: state.notification.content,
+  type: state.notification.type
+})
+
+export default connect(mapStateToProps)(Notification)

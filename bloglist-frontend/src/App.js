@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
@@ -6,13 +7,13 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { clearNotificationAction, setNotificationAction } from './reducers/notification';
 
 const localStorageUserKey = 'bloglistUser'
 
-const App = () => {
+const App = ({clearNotification, setNotification}) => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
 
   const loginFormRef = React.createRef()
 
@@ -36,14 +37,14 @@ const App = () => {
     setUser(parsedUser)
   }, [])
 
-  const showNotification = (text, type) => {
+  const showNotification = (content, type) => {
     setNotification({
-      type,
-      text
+      content,
+      type
     })
 
     setTimeout(() => {
-      setNotification(null)
+      clearNotification()
     }, 5000)
   }
 
@@ -116,9 +117,7 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <Togglable
-      ref={loginFormRef}
-    >
+    <Togglable ref={loginFormRef}>
       <Login handleLogin={handleLogin} />
     </Togglable>
   )
@@ -150,13 +149,17 @@ const App = () => {
   return (
     <div>
       {user !== null && <h2>blogs</h2>}
-      {notification && (
-        <Notification text={notification.text} type={notification.type} />
-      )}
+      <Notification />
       {loginForm()}
       {user !== null && blogPage()}
     </div>
   )
 }
 
-export default App
+const mapDispatchToProps = {
+  clearNotification : clearNotificationAction,
+  setNotification: setNotificationAction
+}
+
+
+export default connect(null, mapDispatchToProps)(App)
