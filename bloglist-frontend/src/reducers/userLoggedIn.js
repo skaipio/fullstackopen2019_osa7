@@ -20,7 +20,7 @@ export const setUserLoggedInAction = (payload) => {
   }
 }
 
-export const clearUserLoggedInAction = () => {
+export const logoutAction = () => {
   window.localStorage.removeItem(localStorageUserKey)
   loginService.setUser(null)
   return {

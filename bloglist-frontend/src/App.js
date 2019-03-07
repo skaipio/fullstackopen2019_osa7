@@ -11,12 +11,12 @@ import {
 } from './reducers/notification'
 import {
   setUserLoggedInAction,
-  clearUserLoggedInAction
 } from './reducers/userLoggedIn'
 import Blogs from './components/Blogs'
 import Users from './components/Users'
 import User from './components/User'
 import Blog from './components/Blog'
+import NavMenu from './components/NavMenu';
 
 const App = ({
   userLoggedIn,
@@ -67,12 +67,7 @@ const App = ({
     </Togglable>
   )
 
-  const loginDetails = () => (
-    <>
-      <p>{userLoggedIn.name} logged in</p>
-      <button onClick={logout}>logout</button>
-    </>
-  )
+  
 
   const userWrappedInRouter = withRouter(({ match }) => (
     <User id={match.params.id} />
@@ -85,10 +80,10 @@ const App = ({
   return (
     <Router>
       <div>
-        {userLoggedIn !== null && <h2>blogs</h2>}
+        <NavMenu />
+        {userLoggedIn && <h2>blog app</h2>}
         <Notification />
         {loginForm()}
-        {userLoggedIn && loginDetails()}
         {userLoggedIn && (
           <Route
             exact
@@ -115,7 +110,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   clearNotification: clearNotificationAction,
   setNotification: setNotificationAction,
-  clearUserLoggedIn: clearUserLoggedInAction,
   setUserLoggedIn: setUserLoggedInAction
 }
 
