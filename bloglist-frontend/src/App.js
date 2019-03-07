@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom'
 import Login from './components/Login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -14,7 +14,8 @@ import {
   clearUserLoggedInAction
 } from './reducers/userLoggedIn'
 import Blogs from './components/Blogs'
-import Users from './components/Users';
+import Users from './components/Users'
+import User from './components/User'
 
 const App = ({
   userLoggedIn,
@@ -72,6 +73,10 @@ const App = ({
     </>
   )
 
+  const userWrappedInRouter = withRouter(({ match }) => (
+    <User id={match.params.id} />
+  ))
+
   return (
     <Router>
       <div>
@@ -79,8 +84,17 @@ const App = ({
         <Notification />
         {loginForm()}
         {userLoggedIn && loginDetails()}
-        {userLoggedIn && <Route exact path="/" render={() => <Blogs showNotification={showNotification} />} />}
-        {userLoggedIn && <Route path="/users" render={() => <Users />} />}
+        {userLoggedIn && (
+          <Route
+            exact
+            path="/"
+            render={() => <Blogs showNotification={showNotification} />}
+          />
+        )}
+        {userLoggedIn && <Route exact path="/users" render={() => <Users />} />}
+        {userLoggedIn && (
+          <Route exact path="/users/:id" render={userWrappedInRouter} />
+        )}
       </div>
     </Router>
   )

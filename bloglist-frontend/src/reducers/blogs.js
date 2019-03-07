@@ -35,7 +35,6 @@ const sortBlogsByLikes = (blogs) => {
 }
 
 function blogsReducer(state = initialState, action) {
-  console.log('blog action', action)
   let blogs = state
   switch(action.type) {
     case 'ADD_BLOG':
