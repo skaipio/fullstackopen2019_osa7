@@ -1,18 +1,9 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import Blog from './components/Blog'
 import Login from './components/Login'
-import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import blogService from './services/blogs'
 import loginService from './services/login'
-import {
-  addBlogAction,
-  removeBlogByIdAction,
-  setBlogsAction,
-  updateBlogAction
-} from './reducers/blogs'
 import {
   clearNotificationAction,
   setNotificationAction
@@ -21,24 +12,16 @@ import {
   setUserLoggedInAction,
   clearUserLoggedInAction
 } from './reducers/userLoggedIn'
+import Blogs from './components/Blogs';
 
 const App = ({
-  blogs,
   userLoggedIn,
-  addBlog,
-  updateBlog,
-  removeBlogById,
-  setBlogs,
   clearNotification,
   setNotification,
   clearUserLoggedIn,
   setUserLoggedIn
 }) => {
   const loginFormRef = React.createRef()
-
-  useEffect(() => {
-    blogService.getAll().then(setBlogs)
-  }, [])
 
   useEffect(() => {
     loginFormRef.current.setVisibility(!userLoggedIn)
@@ -74,48 +57,6 @@ const App = ({
     loginFormRef.current.setVisibility(true)
   }
 
-  const createBlog = async blog => {
-    try {
-      const savedBlog = await blogService.create(blog)
-      savedBlog.user = { ...userLoggedIn }
-      delete savedBlog.user.token
-      addBlog(savedBlog)
-      showNotification(
-        `a new blog ${savedBlog.title} by ${savedBlog.author} added`,
-        'success'
-      )
-      return true
-    } catch (error) {
-      showNotification(error.message, 'error')
-      return false
-    }
-  }
-
-  const likeBlog = async blog => {
-    const likedBlog = {
-      ...blog,
-      likes: blog.likes + 1
-    }
-    try {
-      const updatedBlog = await blogService.update(likedBlog, blog.id)
-      updatedBlog.user = blog.user
-      updateBlog(updatedBlog)
-    } catch (error) {
-      showNotification(error.message, 'error')
-    }
-  }
-
-  const removeBlog = async blog => {
-    if (!window.confirm(`remove blog ${blog.title}`)) return
-
-    try {
-      await blogService.remove(blog.id)
-      removeBlogById(blog.id)
-    } catch (error) {
-      showNotification(error.message, 'error')
-    }
-  }
-
   const loginForm = () => (
     <Togglable ref={loginFormRef}>
       <Login onLogin={handleLogin} />
@@ -129,43 +70,22 @@ const App = ({
     </>
   )
 
-  const blogPage = () => (
-    <>
-      {loginDetails()}
-      <CreateBlog handleCreate={createBlog} />
-      <div className="blog-list">
-        {blogs.map(blog => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            onLike={likeBlog}
-            onRemove={removeBlog}
-          />
-        ))}
-      </div>
-    </>
-  )
-
   return (
     <div>
       {userLoggedIn !== null && <h2>blogs</h2>}
       <Notification />
       {loginForm()}
-      {userLoggedIn !== null && blogPage()}
+      {userLoggedIn && loginDetails()}
+      {userLoggedIn && <Blogs showNotification={showNotification} />}
     </div>
   )
 }
 
 const mapStateToProps = state => ({
-  blogs: state.blogs,
   userLoggedIn: state.userLoggedIn
 })
 
 const mapDispatchToProps = {
-  addBlog: addBlogAction,
-  updateBlog: updateBlogAction,
-  removeBlogById: removeBlogByIdAction,
-  setBlogs: setBlogsAction,
   clearNotification: clearNotificationAction,
   setNotification: setNotificationAction,
   clearUserLoggedIn: clearUserLoggedInAction,
