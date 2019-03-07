@@ -1,40 +1,27 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { removeBlogByIdAction, likeBlogAction } from '../reducers/blogs'
 
-const blogStyle = {
-  padding: '0.5em',
-  border: '1px solid grey',
-  cursor: 'pointer'
-}
-
-const Blog = ({ blog, onLike, onRemove, userLoggedIn }) => {
-  const [expanded, setExpanded] = useState(false)
-
-  const toggleExpanded = () => setExpanded(!expanded)
+const Blog = ({ blog, removeBlog, likeBlog, userLoggedIn }) => {
+  if (!blog) return null
 
   const blogTitleWithAuthor = () => (
-    <div>
+    <h2>
       {blog.title} {blog.author}
-    </div>
-  )
-
-  const compactBlog = () => (
-    <div onClick={toggleExpanded} style={blogStyle} className="compact-blog">
-      {blogTitleWithAuthor()}
-    </div>
+    </h2>
   )
 
   const removeButton = () => (
-    <button onClick={() => onRemove(blog)}>remove</button>
+    <button onClick={() => removeBlog(blog.id)}>remove</button>
   )
 
-  const expandedBlog = () => (
-    <div onClick={toggleExpanded} style={blogStyle} className="expanded-blog">
+  return (
+    <div>
       {blogTitleWithAuthor()}
       <div>{blog.url}</div>
       <div>
-        {blog.likes} likes <button onClick={() => onLike(blog)}>like</button>
+        {blog.likes} likes <button onClick={() => likeBlog(blog)}>like</button>
       </div>
       {blog.user ? <div>added by {blog.user.name}</div> : null}
       {blog.user &&
@@ -42,18 +29,25 @@ const Blog = ({ blog, onLike, onRemove, userLoggedIn }) => {
         removeButton()}
     </div>
   )
-
-  return expanded ? expandedBlog() : compactBlog()
 }
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  onLike: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired
+  blog: PropTypes.object,
+  removeBlog: PropTypes.func.isRequired,
+  likeBlog: PropTypes.func.isRequired
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
+  blog: state.blogs.find(blog => blog.id === ownProps.blogId),
   userLoggedIn: state.userLoggedIn
 })
 
-export default connect(mapStateToProps)(Blog)
+const mapDispatchToProps = {
+  removeBlog: removeBlogByIdAction,
+  likeBlog: likeBlogAction
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Blog)

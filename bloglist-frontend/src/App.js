@@ -16,6 +16,7 @@ import {
 import Blogs from './components/Blogs'
 import Users from './components/Users'
 import User from './components/User'
+import Blog from './components/Blog'
 
 const App = ({
   userLoggedIn,
@@ -77,6 +78,10 @@ const App = ({
     <User id={match.params.id} />
   ))
 
+  const blogWrappedInRouter = withRouter(({ match }) => (
+    <Blog blogId={match.params.id} />
+  ))
+
   return (
     <Router>
       <div>
@@ -94,6 +99,9 @@ const App = ({
         {userLoggedIn && <Route exact path="/users" render={() => <Users />} />}
         {userLoggedIn && (
           <Route exact path="/users/:id" render={userWrappedInRouter} />
+        )}
+        {userLoggedIn && (
+          <Route exact path="/blogs/:id" render={blogWrappedInRouter} />
         )}
       </div>
     </Router>

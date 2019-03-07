@@ -6,7 +6,9 @@ const getUserFromLocalStorage = () => {
   const strUser = window.localStorage.getItem(localStorageUserKey)
   if (!strUser) return null
 
-  return JSON.parse(strUser)
+  const user = JSON.parse(strUser)
+  loginService.setUser(user) // have to do this because blogsService depends on it
+  return user
 }
 
 export const setUserLoggedInAction = (payload) => {

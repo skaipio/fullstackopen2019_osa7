@@ -1,27 +1,25 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import blogService from '../services/blogs'
-import {
-  addBlogAction,
-  updateBlogAction,
-  setBlogsAction,
-  removeBlogByIdAction
-} from '../reducers/blogs'
+import { addBlogAction, initializeBlogsAction } from '../reducers/blogs'
 import CreateBlog from './CreateBlog'
-import Blog from './Blog'
+
+const blogStyle = {
+  padding: '0.5em',
+  border: '1px solid grey'
+}
 
 const Blogs = ({
   blogs,
+  initializeBlogs,
   addBlog,
-  updateBlog,
-  removeBlogById,
-  setBlogs,
   userLoggedIn,
   showNotification
 }) => {
   useEffect(() => {
-    blogService.getAll().then(setBlogs)
+    initializeBlogs()
   }, [])
 
   const createBlog = async blog => {
@@ -41,42 +39,16 @@ const Blogs = ({
     }
   }
 
-  const likeBlog = async blog => {
-    const likedBlog = {
-      ...blog,
-      likes: blog.likes + 1
-    }
-    try {
-      const updatedBlog = await blogService.update(likedBlog, blog.id)
-      updatedBlog.user = blog.user
-      updateBlog(updatedBlog)
-    } catch (error) {
-      showNotification(error.message, 'error')
-    }
-  }
-
-  const removeBlog = async blog => {
-    if (!window.confirm(`remove blog ${blog.title}`)) return
-
-    try {
-      await blogService.remove(blog.id)
-      removeBlogById(blog.id)
-    } catch (error) {
-      showNotification(error.message, 'error')
-    }
-  }
-
   return (
     <>
       <CreateBlog handleCreate={createBlog} />
       <div className="blog-list">
         {blogs.map(blog => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            onLike={likeBlog}
-            onRemove={removeBlog}
-          />
+          <div key={blog.id} style={blogStyle}>
+            <Link to={`/blogs/${blog.id}`}>
+              {blog.title} by {blog.author}
+            </Link>
+          </div>
         ))}
       </div>
     </>
@@ -84,7 +56,9 @@ const Blogs = ({
 }
 
 Blogs.propTypes = {
-  blogs: PropTypes.array.isRequired
+  blogs: PropTypes.array.isRequired,
+  addBlog: PropTypes.func.isRequired,
+  initializeBlogs: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -94,9 +68,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   addBlog: addBlogAction,
-  updateBlog: updateBlogAction,
-  removeBlogById: removeBlogByIdAction,
-  setBlogs: setBlogsAction
+  initializeBlogs: initializeBlogsAction
 }
 
 export default connect(
