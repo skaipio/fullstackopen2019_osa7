@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import Blog from './components/Blog'
 import Login from './components/Login'
@@ -7,25 +7,33 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { addBlogAction, removeBlogByIdAction, setBlogsAction, updateBlogAction } from './reducers/blogs'
+import {
+  addBlogAction,
+  removeBlogByIdAction,
+  setBlogsAction,
+  updateBlogAction
+} from './reducers/blogs'
 import {
   clearNotificationAction,
   setNotificationAction
 } from './reducers/notification'
-
-const localStorageUserKey = 'bloglistUser'
+import {
+  setUserLoggedInAction,
+  clearUserLoggedInAction
+} from './reducers/userLoggedIn'
 
 const App = ({
   blogs,
+  userLoggedIn,
   addBlog,
   updateBlog,
   removeBlogById,
   setBlogs,
   clearNotification,
-  setNotification
+  setNotification,
+  clearUserLoggedIn,
+  setUserLoggedIn
 }) => {
-  const [user, setUser] = useState(null)
-
   const loginFormRef = React.createRef()
 
   useEffect(() => {
@@ -33,14 +41,7 @@ const App = ({
   }, [])
 
   useEffect(() => {
-    const strUser = window.localStorage.getItem(localStorageUserKey)
-    loginFormRef.current.setVisibility(!strUser)
-    if (!strUser) return
-
-    const parsedUser = JSON.parse(strUser)
-
-    loginService.setUser(parsedUser)
-    setUser(parsedUser)
+    loginFormRef.current.setVisibility(!userLoggedIn)
   }, [])
 
   const showNotification = (content, type) => {
@@ -58,9 +59,7 @@ const App = ({
     try {
       const user = await loginService.login(username, password)
       loginFormRef.current.setVisibility(false)
-      window.localStorage.setItem(localStorageUserKey, JSON.stringify(user))
-      loginService.setUser(user)
-      setUser(user)
+      setUserLoggedIn(user)
     } catch (error) {
       if (error.response && error.response.data) {
         showNotification(error.response.data.error, 'error')
@@ -71,15 +70,14 @@ const App = ({
   }
 
   const logout = () => {
-    window.localStorage.removeItem(localStorageUserKey)
-    setUser(null)
+    clearUserLoggedIn()
     loginFormRef.current.setVisibility(true)
   }
 
   const createBlog = async blog => {
     try {
       const savedBlog = await blogService.create(blog)
-      savedBlog.user = {...loginService.getUser()}
+      savedBlog.user = { ...userLoggedIn }
       delete savedBlog.user.token
       addBlog(savedBlog)
       showNotification(
@@ -120,13 +118,13 @@ const App = ({
 
   const loginForm = () => (
     <Togglable ref={loginFormRef}>
-      <Login handleLogin={handleLogin} />
+      <Login onLogin={handleLogin} />
     </Togglable>
   )
 
   const loginDetails = () => (
     <>
-      <p>{user.name} logged in</p>
+      <p>{userLoggedIn.name} logged in</p>
       <button onClick={logout}>logout</button>
     </>
   )
@@ -150,16 +148,17 @@ const App = ({
 
   return (
     <div>
-      {user !== null && <h2>blogs</h2>}
+      {userLoggedIn !== null && <h2>blogs</h2>}
       <Notification />
       {loginForm()}
-      {user !== null && blogPage()}
+      {userLoggedIn !== null && blogPage()}
     </div>
   )
 }
 
 const mapStateToProps = state => ({
-  blogs: state.blogs
+  blogs: state.blogs,
+  userLoggedIn: state.userLoggedIn
 })
 
 const mapDispatchToProps = {
@@ -168,7 +167,9 @@ const mapDispatchToProps = {
   removeBlogById: removeBlogByIdAction,
   setBlogs: setBlogsAction,
   clearNotification: clearNotificationAction,
-  setNotification: setNotificationAction
+  setNotification: setNotificationAction,
+  clearUserLoggedIn: clearUserLoggedInAction,
+  setUserLoggedIn: setUserLoggedInAction
 }
 
 export default connect(

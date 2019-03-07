@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import loginService from '../services/login'
+import { connect } from 'react-redux'
 
 const blogStyle = {
   padding: '0.5em',
@@ -8,7 +8,7 @@ const blogStyle = {
   cursor: 'pointer'
 }
 
-const Blog = ({ blog, onLike, onRemove }) => {
+const Blog = ({ blog, onLike, onRemove, userLoggedIn }) => {
   const [expanded, setExpanded] = useState(false)
 
   const toggleExpanded = () => setExpanded(!expanded)
@@ -25,16 +25,21 @@ const Blog = ({ blog, onLike, onRemove }) => {
     </div>
   )
 
-  const removeButton = () =>
+  const removeButton = () => (
     <button onClick={() => onRemove(blog)}>remove</button>
+  )
 
   const expandedBlog = () => (
     <div onClick={toggleExpanded} style={blogStyle} className="expanded-blog">
       {blogTitleWithAuthor()}
       <div>{blog.url}</div>
-      <div>{blog.likes} likes <button onClick={() => onLike(blog)}>like</button></div>
+      <div>
+        {blog.likes} likes <button onClick={() => onLike(blog)}>like</button>
+      </div>
       {blog.user ? <div>added by {blog.user.name}</div> : null}
-      {blog.user && blog.user.username === loginService.getUser().username && removeButton()}
+      {blog.user &&
+        blog.user.username === userLoggedIn.username &&
+        removeButton()}
     </div>
   )
 
@@ -47,4 +52,8 @@ Blog.propTypes = {
   onRemove: PropTypes.func.isRequired
 }
 
-export default Blog
+const mapStateToProps = state => ({
+  userLoggedIn: state.userLoggedIn
+})
+
+export default connect(mapStateToProps)(Blog)

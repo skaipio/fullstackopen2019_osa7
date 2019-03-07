@@ -1,13 +1,13 @@
 import React from 'react'
 import { useField } from '../hooks/useField'
 
-const Login = ({ handleLogin }) => {
+const Login = ({ onLogin }) => {
   const username = useField('text')
   const password = useField('password')
 
   const submit = event => {
     event.preventDefault()
-    handleLogin(username.value, password.value)
+    onLogin(username.value, password.value)
     username.reset()
     password.reset()
   }
