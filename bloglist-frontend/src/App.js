@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Login from './components/Login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -12,7 +13,8 @@ import {
   setUserLoggedInAction,
   clearUserLoggedInAction
 } from './reducers/userLoggedIn'
-import Blogs from './components/Blogs';
+import Blogs from './components/Blogs'
+import Users from './components/Users';
 
 const App = ({
   userLoggedIn,
@@ -71,13 +73,16 @@ const App = ({
   )
 
   return (
-    <div>
-      {userLoggedIn !== null && <h2>blogs</h2>}
-      <Notification />
-      {loginForm()}
-      {userLoggedIn && loginDetails()}
-      {userLoggedIn && <Blogs showNotification={showNotification} />}
-    </div>
+    <Router>
+      <div>
+        {userLoggedIn !== null && <h2>blogs</h2>}
+        <Notification />
+        {loginForm()}
+        {userLoggedIn && loginDetails()}
+        {userLoggedIn && <Route exact path="/" render={() => <Blogs showNotification={showNotification} />} />}
+        {userLoggedIn && <Route path="/users" render={() => <Users />} />}
+      </div>
+    </Router>
   )
 }
 
