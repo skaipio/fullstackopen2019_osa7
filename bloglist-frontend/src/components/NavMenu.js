@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { logoutAction } from '../reducers/userLoggedIn'
@@ -34,6 +35,10 @@ const NavMenu = ({ logout, userLoggedIn }) => {
       {logoutButton()}
     </div>
   )
+}
+
+NavMenu.propTypes = {
+  logout: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({

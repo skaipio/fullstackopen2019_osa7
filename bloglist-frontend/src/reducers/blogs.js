@@ -80,6 +80,8 @@ function blogsReducer(state = initialState, action) {
     case 'SET_BLOGS':
       blogs = [...action.payload.blogs]
       break
+    default:
+      break
   }
   return sortBlogsByLikes(blogs)
 }

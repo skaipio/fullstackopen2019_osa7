@@ -29,7 +29,7 @@ const App = ({
 
   useEffect(() => {
     loginFormRef.current.setVisibility(!userLoggedIn)
-  }, [])
+  })
 
   const showNotification = (content, type) => {
     setNotification({
@@ -56,18 +56,11 @@ const App = ({
     }
   }
 
-  const logout = () => {
-    clearUserLoggedIn()
-    loginFormRef.current.setVisibility(true)
-  }
-
   const loginForm = () => (
     <Togglable ref={loginFormRef}>
       <Login onLogin={handleLogin} />
     </Togglable>
   )
-
-  
 
   const userWrappedInRouter = withRouter(({ match }) => (
     <User id={match.params.id} />
