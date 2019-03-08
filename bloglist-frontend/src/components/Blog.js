@@ -1,9 +1,15 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { removeBlogByIdAction, likeBlogAction } from '../reducers/blogs'
+import { removeBlogByIdAction, likeBlogAction, initializeBlogsAction } from '../reducers/blogs'
 
-const Blog = ({ blog, removeBlog, likeBlog, userLoggedIn }) => {
+const Blog = ({ blog, initializeBlogs, removeBlog, likeBlog, userLoggedIn }) => {
+  useEffect(() => {
+    if (!blog) {
+      initializeBlogs()
+    }
+  }, [])
+
   if (!blog) return null
 
   const blogTitleWithAuthor = () => (
@@ -43,6 +49,7 @@ const mapStateToProps = (state, ownProps) => ({
 })
 
 const mapDispatchToProps = {
+  initializeBlogs: initializeBlogsAction,
   removeBlog: removeBlogByIdAction,
   likeBlog: likeBlogAction
 }
