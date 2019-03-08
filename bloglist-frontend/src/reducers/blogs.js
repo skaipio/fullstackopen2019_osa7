@@ -57,6 +57,13 @@ export const removeBlogByIdAction = id => {
   }
 }
 
+export const addCommentToBlogAction = (id, comment) => {
+  return async dispatch => {
+    const updatedBlog = await blogService.postCommentToBlog(id, comment)
+    dispatch(updateBlogAction(updatedBlog))
+  }
+}
+
 const initialState = []
 
 const sortBlogsByLikes = blogs => {

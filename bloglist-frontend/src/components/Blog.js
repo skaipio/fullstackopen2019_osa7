@@ -4,14 +4,17 @@ import { connect } from 'react-redux'
 import {
   removeBlogByIdAction,
   likeBlogAction,
-  initializeBlogsAction
+  initializeBlogsAction,
+  addCommentToBlogAction
 } from '../reducers/blogs'
+import CommentForm from './CommentForm';
 
 const Blog = ({
   blog,
   initializeBlogs,
   removeBlog,
   likeBlog,
+  addCommentToBlog,
   userLoggedIn
 }) => {
   useEffect(() => {
@@ -40,6 +43,10 @@ const Blog = ({
     </ul>
   )
 
+  const onSubmitComment = (comment) => {
+    addCommentToBlog(blog.id, comment)
+  }
+
   return (
     <div>
       {blogTitleWithAuthor()}
@@ -52,6 +59,7 @@ const Blog = ({
         blog.user.username === userLoggedIn.username &&
         removeButton()}
       <h3>comments</h3>
+      <CommentForm onSubmit={onSubmitComment} />
       {blog.comments && renderComments()}
     </div>
   )
@@ -60,7 +68,8 @@ const Blog = ({
 Blog.propTypes = {
   blog: PropTypes.object,
   removeBlog: PropTypes.func.isRequired,
-  likeBlog: PropTypes.func.isRequired
+  likeBlog: PropTypes.func.isRequired,
+  addCommentToBlog: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -71,7 +80,8 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = {
   initializeBlogs: initializeBlogsAction,
   removeBlog: removeBlogByIdAction,
-  likeBlog: likeBlogAction
+  likeBlog: likeBlogAction,
+  addCommentToBlog: addCommentToBlogAction,
 }
 
 export default connect(
