@@ -67,4 +67,28 @@ blogRouter.delete('/:id', async (request, response, next) => {
   }
 })
 
+blogRouter.post('/:id/comments', async (request, response, next) => {
+  const blogId = request.params.id
+  const {comment} = request.body
+
+  try {
+    const blog = await Blog.findById(blogId)
+
+    if (!blog) {
+      return response.status(404).json({
+        error: `Blog ${blogId} does not exist`
+      })
+    }
+
+    blog.comments = blog.comments || []
+    blog.comments.push(comment)
+
+    const savedBlog = await blog.save()
+    
+    return response.status(201).json(savedBlog)
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = blogRouter

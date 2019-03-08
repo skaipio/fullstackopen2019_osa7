@@ -1,9 +1,19 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { removeBlogByIdAction, likeBlogAction, initializeBlogsAction } from '../reducers/blogs'
+import {
+  removeBlogByIdAction,
+  likeBlogAction,
+  initializeBlogsAction
+} from '../reducers/blogs'
 
-const Blog = ({ blog, initializeBlogs, removeBlog, likeBlog, userLoggedIn }) => {
+const Blog = ({
+  blog,
+  initializeBlogs,
+  removeBlog,
+  likeBlog,
+  userLoggedIn
+}) => {
   useEffect(() => {
     if (!blog) {
       initializeBlogs()
@@ -22,6 +32,14 @@ const Blog = ({ blog, initializeBlogs, removeBlog, likeBlog, userLoggedIn }) => 
     <button onClick={() => removeBlog(blog.id)}>remove</button>
   )
 
+  const renderComments = () => (
+    <ul>
+      {blog.comments.map(comment => (
+        <li key={comment}>{comment}</li>
+      ))}
+    </ul>
+  )
+
   return (
     <div>
       {blogTitleWithAuthor()}
@@ -29,10 +47,12 @@ const Blog = ({ blog, initializeBlogs, removeBlog, likeBlog, userLoggedIn }) => 
       <div>
         {blog.likes} likes <button onClick={() => likeBlog(blog)}>like</button>
       </div>
-      {blog.user ? <div>added by {blog.user.name}</div> : null}
+      {blog.user && <div>added by {blog.user.name}</div>}
       {blog.user &&
         blog.user.username === userLoggedIn.username &&
         removeButton()}
+      <h3>comments</h3>
+      {blog.comments && renderComments()}
     </div>
   )
 }
