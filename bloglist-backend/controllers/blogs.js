@@ -84,8 +84,12 @@ blogRouter.post('/:id/comments', async (request, response, next) => {
     blog.comments.push(comment)
 
     const savedBlog = await blog.save()
-    
-    return response.status(201).json(savedBlog)
+
+    const blogJson = savedBlog.toJSON()
+    // Reverse to show newer first
+    blogJson.comments = blogJson.comments.reverse()
+
+    return response.status(201).json(blogJson)
   } catch (error) {
     next(error)
   }
