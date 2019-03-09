@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { Table } from 'semantic-ui-react'
 import blogService from '../services/blogs'
 import { addBlogAction, initializeBlogsAction } from '../reducers/blogs'
 import CreateBlog from './CreateBlog'
@@ -42,15 +43,19 @@ const Blogs = ({
   return (
     <>
       <CreateBlog handleCreate={createBlog} />
-      <div className="blog-list">
-        {blogs.map(blog => (
-          <div key={blog.id} style={blogStyle}>
-            <Link to={`/blogs/${blog.id}`}>
-              {blog.title} by {blog.author}
-            </Link>
-          </div>
-        ))}
-      </div>
+      <Table celled>
+        <Table.Body>
+          {blogs.map(blog => (
+            <Table.Row key={blog.id} style={blogStyle}>
+              <Table.Cell>
+                <Link to={`/blogs/${blog.id}`}>
+                  {blog.title} by {blog.author}
+                </Link>
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
     </>
   )
 }

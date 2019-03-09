@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { Button, List, Divider, Icon } from 'semantic-ui-react'
 import {
   removeBlogByIdAction,
   likeBlogAction,
   initializeBlogsAction,
   addCommentToBlogAction
 } from '../reducers/blogs'
-import CommentForm from './CommentForm';
+import CommentForm from './CommentForm'
 
 const Blog = ({
   blog,
@@ -17,6 +18,20 @@ const Blog = ({
   addCommentToBlog,
   userLoggedIn
 }) => {
+  const nonHoverLikeIconClasses = 'thumbs up outline icon'
+  const onHoverLikeIconClasses = 'thumbs up outline blue icon'
+  const [likeIconClasses, setLikeIconClasses] = useState(
+    nonHoverLikeIconClasses
+  )
+
+  const mouseEnter = () => {
+    setLikeIconClasses(onHoverLikeIconClasses)
+  }
+
+  const mouseLeave = () => {
+    setLikeIconClasses(nonHoverLikeIconClasses)
+  }
+
   useEffect(() => {
     if (!blog) {
       initializeBlogs()
@@ -27,37 +42,52 @@ const Blog = ({
 
   const blogTitleWithAuthor = () => (
     <h2>
-      {blog.title} {blog.author}
+      {blog.title} by {blog.author}
     </h2>
   )
 
   const removeButton = () => (
-    <button onClick={() => removeBlog(blog.id)}>remove</button>
+    <Button negative onClick={() => removeBlog(blog.id)}>
+      remove
+    </Button>
   )
 
   const renderComments = () => (
-    <ul>
+    <List divided>
       {blog.comments.map(comment => (
-        <li key={comment}>{comment}</li>
+        <List.Item key={comment}>{comment}</List.Item>
       ))}
-    </ul>
+    </List>
   )
 
-  const onSubmitComment = (comment) => {
+  const onSubmitComment = comment => {
     addCommentToBlog(blog.id, comment)
   }
 
   return (
     <div>
       {blogTitleWithAuthor()}
-      <div>{blog.url}</div>
-      <div>
-        {blog.likes} likes <button onClick={() => likeBlog(blog)}>like</button>
-      </div>
-      {blog.user && <div>added by {blog.user.name}</div>}
-      {blog.user &&
-        blog.user.username === userLoggedIn.username &&
-        removeButton()}
+      <List>
+        <List.Item>{blog.url}</List.Item>
+        <List.Item>
+          <div>{blog.likes} likes </div>
+          <h4>
+            <Icon
+              className={likeIconClasses}
+              onClick={() => likeBlog(blog)}
+              onMouseEnter={mouseEnter}
+              onMouseLeave={mouseLeave}
+            />
+            like
+          </h4>
+        </List.Item>
+        <Divider />
+        {blog.user && <List.Item>added by {blog.user.name}</List.Item>}
+        {blog.user &&
+          blog.user.username === userLoggedIn.username &&
+          removeButton()}
+      </List>
+
       <h3>comments</h3>
       <CommentForm onSubmit={onSubmitComment} />
       {blog.comments && renderComments()}
@@ -69,7 +99,7 @@ Blog.propTypes = {
   blog: PropTypes.object,
   removeBlog: PropTypes.func.isRequired,
   likeBlog: PropTypes.func.isRequired,
-  addCommentToBlog: PropTypes.func.isRequired,
+  addCommentToBlog: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -81,7 +111,7 @@ const mapDispatchToProps = {
   initializeBlogs: initializeBlogsAction,
   removeBlog: removeBlogByIdAction,
   likeBlog: likeBlogAction,
-  addCommentToBlog: addCommentToBlogAction,
+  addCommentToBlog: addCommentToBlogAction
 }
 
 export default connect(

@@ -2,8 +2,9 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { Table } from 'semantic-ui-react'
 import userService from '../services/users'
-import { setUsersAction } from '../reducers/users';
+import { setUsersAction } from '../reducers/users'
 
 const Users = ({ users, setUsers }) => {
   useEffect(() => {
@@ -15,27 +16,27 @@ const Users = ({ users, setUsers }) => {
   const renderRowsForUserTable = () =>
     users.map(user => {
       return (
-        <tr key={user.username}>
-          <td>
+        <Table.Row key={user.username}>
+          <Table.Cell>
             <Link to={`/users/${user.id}`}>{user.name}</Link>
-          </td>
-          <td>{user.blogs.length}</td>
-        </tr>
+          </Table.Cell>
+          <Table.Cell>{user.blogs.length}</Table.Cell>
+        </Table.Row>
       )
     })
 
   return (
     <div>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th />
-            <th>blogs created</th>
-          </tr>
-        </thead>
-        <tbody>{renderRowsForUserTable()}</tbody>
-      </table>
+      <h2 className="ui center aligned header">Users</h2>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Username</Table.HeaderCell>
+            <Table.HeaderCell>blogs created</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>{renderRowsForUserTable()}</Table.Body>
+      </Table>
     </div>
   )
 }
@@ -46,11 +47,11 @@ Users.propTypes = {
 }
 
 const mapStateToProps = state => ({
-  users: state.users,
+  users: state.users
 })
 
 const mapDispatchToProps = {
-  setUsers: setUsersAction,
+  setUsers: setUsersAction
 }
 
 export default connect(

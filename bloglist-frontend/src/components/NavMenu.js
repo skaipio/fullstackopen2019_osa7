@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { Menu } from 'semantic-ui-react'
 import { logoutAction } from '../reducers/userLoggedIn'
 
 const navbarStyle = {
@@ -18,22 +19,35 @@ const NavMenu = ({ logout, userLoggedIn }) => {
   if (!userLoggedIn) return null
 
   const userName = () => (
-    <div style={navbarItemStyle}>{userLoggedIn.name} logged in</div>
+    <div style={navbarItemStyle}>
+      <em>{userLoggedIn.name} logged in</em>
+    </div>
   )
 
-  const logoutButton = () => <button onClick={logout}>logout</button>
+  const logoutLink = () => (
+    <Link to="/" type="text" onClick={logout}>
+      logout
+    </Link>
+  )
 
   return (
-    <div style={navbarStyle}>
-      <Link to="/" style={navbarItemStyle}>
-        blogs
-      </Link>
-      <Link to="/users" style={navbarItemStyle}>
-        users
-      </Link>
-      {userName()}
-      {logoutButton()}
-    </div>
+    <Menu style={navbarStyle}>
+      <Menu.Item><h3>Blog App</h3></Menu.Item>
+      <Menu.Item link>
+        <Link to="/" style={navbarItemStyle}>
+          blogs
+        </Link>
+      </Menu.Item>
+      <Menu.Item link>
+        <Link to="/users" style={navbarItemStyle}>
+          users
+        </Link>
+      </Menu.Item>
+      <Menu.Item link className="right">
+        {userName()}
+        {logoutLink()}
+      </Menu.Item>
+    </Menu>
   )
 }
 

@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Button, Form } from 'semantic-ui-react'
 
-const CommentForm = ({onSubmit}) => {
-  const submit = (event) => {
+const CommentForm = ({ onSubmit }) => {
+  const submit = event => {
     event.preventDefault()
     const comment = event.target.comment.value
     if (comment.length === 0) return
@@ -10,10 +11,12 @@ const CommentForm = ({onSubmit}) => {
   }
 
   return (
-    <form onSubmit={submit}>
-      <input type="text" name="comment" />
-      <button type="submit">comment</button>
-    </form>
+    <Form onSubmit={submit}>
+      <Form.Field>
+        <input type="text" name="comment" />
+      </Form.Field>
+      <Button type="submit">comment</Button>
+    </Form>
   )
 }
 

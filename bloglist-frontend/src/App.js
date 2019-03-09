@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom'
+import { Container } from 'semantic-ui-react'
 import Login from './components/Login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -9,20 +10,17 @@ import {
   clearNotificationAction,
   setNotificationAction
 } from './reducers/notification'
-import {
-  setUserLoggedInAction,
-} from './reducers/userLoggedIn'
+import { setUserLoggedInAction } from './reducers/userLoggedIn'
 import Blogs from './components/Blogs'
 import Users from './components/Users'
 import User from './components/User'
 import Blog from './components/Blog'
-import NavMenu from './components/NavMenu';
+import NavMenu from './components/NavMenu'
 
 const App = ({
   userLoggedIn,
   clearNotification,
   setNotification,
-  clearUserLoggedIn,
   setUserLoggedIn
 }) => {
   const loginFormRef = React.createRef()
@@ -72,9 +70,8 @@ const App = ({
 
   return (
     <Router>
-      <div>
+      <Container>
         <NavMenu />
-        {userLoggedIn && <h2>blog app</h2>}
         <Notification />
         {loginForm()}
         {userLoggedIn && (
@@ -91,7 +88,7 @@ const App = ({
         {userLoggedIn && (
           <Route exact path="/blogs/:id" render={blogWrappedInRouter} />
         )}
-      </div>
+      </Container>
     </Router>
   )
 }

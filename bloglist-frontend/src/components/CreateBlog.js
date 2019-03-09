@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Form, Button } from 'semantic-ui-react'
 
 const CreateBlog = ({ handleCreate }) => {
   const [title, setTitle] = useState('')
@@ -22,35 +23,35 @@ const CreateBlog = ({ handleCreate }) => {
   return (
     <div>
       <h2>create new</h2>
-      <form onSubmit={submit}>
-        <div>
+      <Form onSubmit={submit}>
+        <Form.Field>
           <label>title</label>
           <input
             type="text"
             value={title}
             onChange={event => setTitle(event.target.value)}
           />
-        </div>
-        <div>
+        </Form.Field>
+        <Form.Field>
           <label>author</label>
           <input
             type="text"
             value={author}
             onChange={event => setAuthor(event.target.value)}
           />
-        </div>
-        <div>
+        </Form.Field>
+        <Form.Field>
           <label>url</label>
           <input
             type="text"
             value={url}
             onChange={event => setUrl(event.target.value)}
           />
-        </div>
+        </Form.Field>
         <div>
-          <button type="submit">create</button>
+          <Button type="submit">create</Button>
         </div>
-      </form>
+      </Form>
     </div>
   )
 }

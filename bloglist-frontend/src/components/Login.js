@@ -1,5 +1,6 @@
 import React from 'react'
 import { useField } from '../hooks/useField'
+import { Form, Button } from 'semantic-ui-react'
 
 const Login = ({ onLogin }) => {
   const username = useField('text')
@@ -15,19 +16,17 @@ const Login = ({ onLogin }) => {
   return (
     <>
       <h2>Log in to application</h2>
-      <form onSubmit={submit} className="login-form">
-        <div>
+      <Form onSubmit={submit} className="login-form">
+        <Form.Field>
           <label>käyttäjätunnus</label>
           <input {...username.asInputProps()} />
-        </div>
-        <div>
+        </Form.Field>
+        <Form.Field>
           <label>salasana</label>
           <input {...password.asInputProps()} />
-        </div>
-        <div>
-          <button type="submit">kirjaudu</button>
-        </div>
-      </form>
+        </Form.Field>
+        <Button type="submit">kirjaudu</Button>
+      </Form>
     </>
   )
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import {Message} from 'semantic-ui-react'
 
 const Notification = ({ content, type }) => {
   if (!content || content.length === 0) return null
@@ -17,12 +18,12 @@ const Notification = ({ content, type }) => {
   }
 
   return (
-    <div
-      style={type === 'error' ? errorStyle : successStyle}
-      className={{ success: type === 'success', error: type === 'error' }}
+    <Message
+      success={type === 'success'}
+      warning={type === 'error'}
     >
       {content}
-    </div>
+    </Message>
   )
 }
 
